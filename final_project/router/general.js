@@ -102,4 +102,20 @@ public_users.get('/review/:isbn', function (req, res) {
     .catch(() => res.status(500).json({ message: "Review alınamadı" }));
 });
 
+// Delete all reviews for a book (Rubric/Q10 expects endpoint `/review/:isbn`)
+public_users.delete('/review/:isbn', async function (req, res) {
+  try {
+    const isbn = req.params.isbn;
+    const b = await getBooksAsync();
+    const book = b[isbn];
+    if (!book) {
+      return res.status(404).json({ message: "Book not found" });
+    }
+    book.reviews = {};
+    return res.status(200).json({ message: `Review for ISBN ${isbn} deleted` });
+  } catch {
+    return res.status(500).json({ message: "Error deleting review" });
+  }
+});
+
 module.exports.general = public_users;

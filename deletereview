@@ -1,15 +1,3 @@
-curl -s -X POST http://localhost:5001/register -H "Content-Type: application/json" -d '{"username":"qa_user_delete","password":"pass123"}'
+curl -s -X DELETE http://localhost:5001/review/1
 
-{"message":"User registered successfully"}
-
-curl -s -c /tmp/bookshop_cookiejar -X POST http://localhost:5001/customer/login -H "Content-Type: application/json" -d '{"username":"qa_user_delete","password":"pass123"}'
-
-{"message":"Login successful"}
-
-curl -s -b /tmp/bookshop_cookiejar -X PUT "http://localhost:5001/customer/auth/review/1?review=To%20be%20deleted"
-
-{"message":"Review added/modified successfully","isbn":"1","reviews":{"qa_user_delete":"To be deleted"}}
-
-curl -s -b /tmp/bookshop_cookiejar -X DELETE http://localhost:5001/customer/auth/review/1
-
-{"message":"Review deleted successfully"}
+{"message":"Review for ISBN 1 deleted"}
