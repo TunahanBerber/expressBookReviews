@@ -1,15 +1,15 @@
-curl -s -X POST http://localhost:5001/register -H "Content-Type: application/json" -d '{"username":"qa_user_3","password":"pass123"}'
+curl -s -X POST http://localhost:5001/register -H "Content-Type: application/json" -d '{"username":"qa_user_delete","password":"pass123"}'
 
-{"message":"Kayıt başarılı"}
+{"message":"User registered successfully"}
 
-curl -s -c /tmp/bookshop_cookiejar -X POST http://localhost:5001/customer/login -H "Content-Type: application/json" -d '{"username":"qa_user_3","password":"pass123"}'
+curl -s -c /tmp/bookshop_cookiejar -X POST http://localhost:5001/customer/login -H "Content-Type: application/json" -d '{"username":"qa_user_delete","password":"pass123"}'
 
-{"message":"Giriş başarılı"}
+{"message":"Login successful"}
 
-curl -s -b /tmp/bookshop_cookiejar -X PUT http://localhost:5001/customer/auth/review/1 -H "Content-Type: application/json" -d '{"review":"Silinecek review"}'
+curl -s -b /tmp/bookshop_cookiejar -X PUT "http://localhost:5001/customer/auth/review/1?review=To%20be%20deleted"
 
-{"message":"Review eklendi/güncellendi","isbn":"1","reviews":{"qa_user_3":"Silinecek review"}}
+{"message":"Review added/modified successfully","isbn":"1","reviews":{"qa_user_delete":"To be deleted"}}
 
 curl -s -b /tmp/bookshop_cookiejar -X DELETE http://localhost:5001/customer/auth/review/1
 
-{"message":"Review silindi","isbn":"1","reviews":{}}
+{"message":"Review deleted successfully"}
