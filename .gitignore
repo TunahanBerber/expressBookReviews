@@ -1,4 +1,7 @@
 # Distribution / packaging
 node_modules
 
+# IDE
+.idea/
+
 

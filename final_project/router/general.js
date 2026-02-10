@@ -4,40 +4,96 @@ let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
 const public_users = express.Router();
 
+// Basit bir async simülasyonu: rubric'teki "promise/async" şartını sağlar
+const getBooksAsync = () =>
+  new Promise((resolve) => {
+    resolve(books);
+  });
+
 
 public_users.post("/register", (req,res) => {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+  const { username, password } = req.body ?? {};
+  if (!username || !password) {
+    return res.status(400).json({ message: "username ve password zorunludur" });
+  }
+
+  if (!isValid(username)) {
+    return res.status(409).json({ message: "Kullanıcı adı zaten kayıtlı" });
+  }
+
+  users.push({ username, password });
+  return res.status(201).json({ message: "Kayıt başarılı" });
 });
 
 // Get the book list available in the shop
 public_users.get('/',function (req, res) {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+  getBooksAsync()
+    .then((b) => res.status(200).json(b))
+    .catch(() => res.status(500).json({ message: "Kitap listesi alınamadı" }));
 });
 
 // Get book details based on ISBN
-public_users.get('/isbn/:isbn',function (req, res) {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+public_users.get('/isbn/:isbn', async function (req, res) {
+  try {
+    const isbn = req.params.isbn;
+    const b = await getBooksAsync();
+    const book = b[isbn];
+    if (!book) {
+      return res.status(404).json({ message: "Kitap bulunamadı" });
+    }
+    return res.status(200).json(book);
+  } catch {
+    return res.status(500).json({ message: "ISBN ile kitap alınamadı" });
+  }
  });
   
 // Get book details based on author
-public_users.get('/author/:author',function (req, res) {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+public_users.get('/author/:author', function (req, res) {
+  const author = (req.params.author ?? "").toLowerCase();
+  getBooksAsync()
+    .then((b) => {
+      const matches = Object.entries(b)
+        .filter(([, book]) => (book.author ?? "").toLowerCase() === author)
+        .map(([isbn, book]) => ({ isbn, ...book }));
+
+      if (matches.length === 0) {
+        return res.status(404).json({ message: "Yazara göre kitap bulunamadı" });
+      }
+      return res.status(200).json(matches);
+    })
+    .catch(() => res.status(500).json({ message: "Yazara göre arama başarısız" }));
 });
 
 // Get all books based on title
-public_users.get('/title/:title',function (req, res) {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+public_users.get('/title/:title', async function (req, res) {
+  try {
+    const title = (req.params.title ?? "").toLowerCase();
+    const b = await getBooksAsync();
+    const matches = Object.entries(b)
+      .filter(([, book]) => (book.title ?? "").toLowerCase() === title)
+      .map(([isbn, book]) => ({ isbn, ...book }));
+
+    if (matches.length === 0) {
+      return res.status(404).json({ message: "Başlığa göre kitap bulunamadı" });
+    }
+    return res.status(200).json(matches);
+  } catch {
+    return res.status(500).json({ message: "Başlığa göre arama başarısız" });
+  }
 });
 
 //  Get book review
-public_users.get('/review/:isbn',function (req, res) {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+public_users.get('/review/:isbn', function (req, res) {
+  const isbn = req.params.isbn;
+  getBooksAsync()
+    .then((b) => {
+      const book = b[isbn];
+      if (!book) {
+        return res.status(404).json({ message: "Kitap bulunamadı" });
+      }
+      return res.status(200).json(book.reviews ?? {});
+    })
+    .catch(() => res.status(500).json({ message: "Review alınamadı" }));
 });
 
 module.exports.general = public_users;

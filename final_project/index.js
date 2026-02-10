@@ -12,9 +12,21 @@ app.use("/customer",session({secret:"fingerprint_customer",resave: true, saveUni
 
 app.use("/customer/auth/*", function auth(req,res,next){
 //Write the authenication mechanism here
+  const token = req.session?.authorization?.accessToken;
+  if (!token) {
+    return res.status(403).json({ message: "Token eksik, giriş gerekli" });
+  }
+
+  jwt.verify(token, "access", (err, user) => {
+    if (err) {
+      return res.status(403).json({ message: "Geçersiz token" });
+    }
+    req.user = user;
+    return next();
+  });
 });
  
-const PORT =5000;
+const PORT =5001;
 
 app.use("/customer", customer_routes);
 app.use("/", genl_routes);
