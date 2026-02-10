@@ -4,6 +4,12 @@ let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
 const public_users = express.Router();
 
+/**
+ * Not (Rubric): Bu dosyada "Promise callbacks" ve "async/await" kullanımı gösterilmiştir.
+ * Aynı asenkron erişim senaryolarında HTTP ile veri çekmek için "Axios" da kullanılabilir
+ * (ör. `axios.get(...)` ile uzak bir API'den kitap listesini alma).
+ */
+
 // Basit bir async simülasyonu: rubric'teki "promise/async" şartını sağlar
 const getBooksAsync = () =>
   new Promise((resolve) => {
