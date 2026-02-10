@@ -1,11 +1,11 @@
-curl -s -X POST http://localhost:5001/register -H "Content-Type: application/json" -d '{"username":"qa_user_2","password":"pass123"}'
+curl -s -X POST http://localhost:5001/register -H "Content-Type: application/json" -d '{"username":"qa_user_review","password":"pass123"}'
 
-{"message":"Kayıt başarılı"}
+{"message":"User registered successfully"}
 
-curl -s -c /tmp/bookshop_cookiejar -X POST http://localhost:5001/customer/login -H "Content-Type: application/json" -d '{"username":"qa_user_2","password":"pass123"}'
+curl -s -c /tmp/bookshop_cookiejar -X POST http://localhost:5001/customer/login -H "Content-Type: application/json" -d '{"username":"qa_user_review","password":"pass123"}'
 
-{"message":"Giriş başarılı"}
+{"message":"Login successful"}
 
-curl -s -b /tmp/bookshop_cookiejar -X PUT http://localhost:5001/customer/auth/review/1 -H "Content-Type: application/json" -d '{"review":"Cok iyi"}'
+curl -s -b /tmp/bookshop_cookiejar -X PUT "http://localhost:5001/customer/auth/review/1?review=Great%20book"
 
-{"message":"Review eklendi/güncellendi","isbn":"1","reviews":{"qa_user_2":"Cok iyi"}}
+{"message":"Review added/modified successfully","isbn":"1","reviews":{"qa_user_review":"Great book"}}
